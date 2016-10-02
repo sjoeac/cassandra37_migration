@@ -1,0 +1,107 @@
+1. Stop cassandra. Take Snapshot Data Backup using cassandra_backup script
+
+2-  delete /crypts/sdb/c/d/cassamndra/data/* dirs
+
+3. Install cassandra 3.7.  Follow instalation steps
+
+4. update cassandra.yaml with data dir, seeds, local and rpc address details
+
+5. restart cassandra and add users cloud and space
+
+4.  import schema.sql and restart cassandra, cerify data dir schema data.
+%s/AND caching = '{"keys":"ALL", "rows_per_partition":"NONE"}'/AND caching = {'keys':'ALL', 'rows_per_partition':'NONE'}/g
+
+5.  Run manual cp commands for snapshot data restore from backup dir.  Follow Steps listed under "Data Backup"
+
+
+
+
+
+
+Data Backup
+------------
+SDB
+
+CDSDB
+----------
+backup/sdb/2016-10-01/SNAPSHOTS/cdsdb/clustered_data_copy-*/snapshots/snp-2016-10-01-*/*  /cryptfs/sdb/cassandra/data/cdsdb/clustered_data_copy-*/
+backup/sdb/2016-10-01/SNAPSHOTS/cdsdb/clustered_data_clone-*/snapshots/snp-2016-10-01-*/*  /cryptfs/sdb/cassandra/data/cdsdb/clustered_data_clone-*/
+backup/sdb/2016-10-01/SNAPSHOTS/cdsdb/clustered_data-*/snapshots/snp-2016-10-01-*/*  /cryptfs/sdb/cassandra/data/cdsdb/clustered_data_copy-*/
+backup/sdb/2016-10-01/SNAPSHOTS/cdsdb/customer_raw_data-*/snapshots/snp-2016-10-01-*/*  /cryptfs/sdb/cassandra/data/cdsdb/clustered_raw_data-*/
+backup/sdb/2016-10-01/SNAPSHOTS/cdsdb/user_info-*/snapshots/snp-2016-10-01-*/*  /cryptfs/sdb/cassandra/data/cdsdb/user_info-*/
+backup/sdb/2016-10-01/SNAPSHOTS/cdsdb/clustered_data_copy-*/snapshots/snp-2016-10-01-*/*  /cryptfs/sdb/cassandra/data/cdsdb/clustered_data_copy-*/
+backup/sdb/2016-10-01/SNAPSHOTS/cdsdb/profile-*/snapshots/snp-2016-10-01-*/*  /cryptfs/sdb/cassandra/data/cdsdb/profile-*/
+backup/sdb/2016-10-01/SNAPSHOTS/cdsdb/phone_contact_data-*/snapshots/snp-2016-10-01-*/*  /cryptfs/sdb/cassandra/data/cdsdb/phone_contact_data-*/
+backup/sdb/2016-10-01/SNAPSHOTS/cdsdb/job_status-*/snapshots/snp-2016-10-01-*/*  /cryptfs/sdb/cassandra/data/cdsdb/job_status-*/
+backup/sdb/2016-10-01/SNAPSHOTS/cdsdb/unprocessed_customer_data-*/snapshots/snp-2016-10-01-*/*  /cryptfs/sdb/cassandra/data/cdsdb/unprocessed_customer_data-*/
+
+
+CDS_TEST
+--------
+backup/sdb/2016-10-01/SNAPSHOTS/cds_test/clustered_data_clone-*/snapshots/snp-2016-10-01-*/*  /cryptfs/sdb/cassandra/data/cds_test/clustered_data_clone-*/
+backup/sdb/2016-10-01/SNAPSHOTS/cds_test/clustered_data-*/snapshots/snp-2016-10-01-*/*  /cryptfs/sdb/cassandra/data/cds_test/clustered_data_copy-*/
+backup/sdb/2016-10-01/SNAPSHOTS/cds_test/customer_raw_data-*/snapshots/snp-2016-10-01-*/*  /cryptfs/sdb/cassandra/data/cds_test/clustered_raw_data-*/
+backup/sdb/2016-10-01/SNAPSHOTS/cds_test/job_status-*/snapshots/snp-2016-10-01-*/*  /cryptfs/sdb/cassandra/data/cds_test/job_status-*/
+backup/sdb/2016-10-01/SNAPSHOTS/cds_test/unprocessed_customer_data-*/snapshots/snp-2016-10-01-*/*  /cryptfs/sdb/cassandra/data/cds_test/unprocessed_customer_data-*/
+backup/sdb/2016-10-01/SNAPSHOTS/cds_test/user_info-*/snapshots/snp-2016-10-01-*/*  /cryptfs/sdb/cassandra/data/cds_test/user_info-*/
+backup/sdb/2016-10-01/SNAPSHOTS/cds_test/profile-*/snapshots/snp-2016-10-01-*/*  /cryptfs/sdb/cassandra/data/cds_test/profile-*/
+
+
+MP_DATA
+--------
+backup/sdb/2016-10-01/SNAPSHOTS/mp_data/preapproved_upload-*/snapshots/snp-2016-10-01-*/*  /cryptfs/sdb/cassandra/data/mp_data/preapproved_upload-*/
+backup/sdb/2016-10-01/SNAPSHOTS/mp_data/user_mobile_sms-*/snapshots/snp-2016-10-01-*/*  /cryptfs/sdb/cassandra/data/mp_data/user_mobile_sms-*/
+backup/sdb/2016-10-01/SNAPSHOTS/mp_data/preapproved_bankdata-*/snapshots/snp-2016-10-01-*/* /cryptfs/sdb/cassandra/data/mp_data/preapproved_bankdata-*/
+
+
+
+
+Installation Steps
+------------------------------------
+
+Java 8
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update
+sudo apt-get install oracle-java8-installer
+
+Cassandra
+echo "deb http://www.apache.org/dist/cassandra/debian 35x main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
+echo "deb-src http://www.apache.org/dist/cassandra/debian 35x main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
+
+gpg --keyserver pgp.mit.edu --recv-keys F758CE318D77295D
+gpg --export --armor F758CE318D77295D | sudo apt-key add -
+gpg --keyserver pgp.mit.edu --recv-keys 2B5C1B00
+gpg --export --armor 2B5C1B00 | sudo apt-key add -
+gpg --keyserver pgp.mit.edu --recv-keys 0353B12C
+gpg --export --armor 0353B12C | sudo apt-key add -
+sudo apt-get update
+
+Elastic Search
+wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add
+echo "deb http://packages.elastic.co/elasticsearch/1.7/debian stable main" | sudo tee -a /etc/apt/sources.list.d/elasticsearch-1.7.list
+sudo apt-get update
+
+sudo apt-get install elasticsearch
+sudo apt-get install cassandra
+
+
+Custom Java
+-----------
+wget http://build.bankbazaar.com/archiva/repository/internal/com.oracle/jdk-linux-x64/1.8.0_91/jdk-8u91-linux-x64.tar.gz
+cd /local/softwares/
+ln -s /local/softwares/jdk1.8.0_91 java8
+
+cd /usr/bin/
+rm java
+ln -s /local/softwares/java8/bin/java java
+/usr/bin/java
+
+(Or)
+
+
+cd /etc/alternatives/
+sudo rm java
+sudo ln -s /opt/softwares/java8/bin/java java
+ 
+chown -R cassandra:cassandra /var/lib/cassandra
+chown -R cassandra:cassandra /var/log/cassandra
